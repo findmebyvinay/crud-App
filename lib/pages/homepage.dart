@@ -13,6 +13,11 @@ class _HomepageState extends State<Homepage> {
    void onPress(){
     showDialog(context: context, builder:(context)=>AlertDialog(
      content: TextField(),
+     actions: [
+      ElevatedButton(onPressed: (){},
+       child: Text('Save')),
+       Icon(Icons.favorite,color:Colors.pinkAccent,)
+     ],
     ));
   }
   
