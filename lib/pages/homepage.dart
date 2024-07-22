@@ -1,20 +1,36 @@
+import 'package:crud/services/firestore.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  Homepage({super.key});
  
+
+   
 
   @override
   State<Homepage> createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
+  
+  final FireStore fireStoreService= FireStore();
+
+
+  final controller = TextEditingController();
   @override
    void onPress(){
     showDialog(context: context, builder:(context)=>AlertDialog(
-     content: TextField(),
+     content: TextField(
+      controller: controller,
+     ),
      actions: [
-      ElevatedButton(onPressed: (){},
+      ElevatedButton(onPressed: (){
+        fireStoreService.addNote(controller.text);
+
+        controller.clear();
+
+        Navigator.pop(context);
+      },
        child: Text('Save')),
        Icon(Icons.favorite,color:Colors.pinkAccent,)
      ],
