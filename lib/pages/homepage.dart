@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud/services/firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -17,25 +18,30 @@ class _HomepageState extends State<Homepage> {
 
 
   final controller = TextEditingController();
-  @override
-   void onPress(){
+
+   void onPress(String?docId){
     showDialog(context: context, builder:(context)=>AlertDialog(
      content: TextField(
       controller: controller,
      ),
      actions: [
       ElevatedButton(onPressed: (){
+        if(docId==null){
         fireStoreService.addNote(controller.text);
+        }
+        else{
+        fireStoreService.updateNote(docId, controller.text);
+       
+            }   
+             controller.clear();
 
-        controller.clear();
-
-        Navigator.pop(context);
-      },
+        Navigator.pop(context);   },
        child: Text('Save')),
        Icon(Icons.favorite,color:Colors.pinkAccent,)
      ],
     ));
   }
+ 
   
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,8 +55,45 @@ class _HomepageState extends State<Homepage> {
         centerTitle: true,
         backgroundColor: Colors.pink[200],
       ),
-      floatingActionButton: FloatingActionButton(onPressed:onPress,
+      floatingActionButton: FloatingActionButton(onPressed:()=>onPress,
       child: Icon(Icons.add),),
+      body:StreamBuilder<QuerySnapshot>(
+        stream:fireStoreService .getNotesStream(),
+        builder:(context,snapshot){
+          if(snapshot.hasData){
+
+            List notesList = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: notesList.length,
+              itemBuilder: (context,index){
+                DocumentSnapshot document= notesList[index];
+                String DocumentId= document.id;
+
+                Map<String,dynamic> data = document.data() as Map<String,dynamic>;
+                String noteText = data['note'];
+
+                return ListTile(
+                  title: Text(noteText),
+                  trailing:Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                       IconButton(onPressed: ()=>onPress(DocumentId),
+                   icon: Icon(Icons.settings)),
+                       IconButton(onPressed: ()=>fireStoreService.deleteNote(DocumentId),
+                   icon: Icon(Icons.delete)),
+                    ],
+                  )
+                );
+                
+
+            });
+          }
+          else{
+            return Text('no Notes');
+          }
+        }
+      ),
     );
   }
 }
