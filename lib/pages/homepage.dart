@@ -42,7 +42,7 @@ class _HomepageState extends State<Homepage> {
     ));
   }
  
-  
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +55,7 @@ class _HomepageState extends State<Homepage> {
         centerTitle: true,
         backgroundColor: Colors.pink[200],
       ),
-      floatingActionButton: FloatingActionButton(onPressed:()=>onPress,
+      floatingActionButton: FloatingActionButton(onPressed:()=> onPress,
       child: Icon(Icons.add),),
       body:StreamBuilder<QuerySnapshot>(
         stream:fireStoreService .getNotesStream(),
@@ -74,7 +74,15 @@ class _HomepageState extends State<Homepage> {
                 String noteText = data['note'];
 
                 return ListTile(
-                  title: Text(noteText),
+                  title: Row(
+                    children: [
+                      Row(
+                        children: [
+                          Text(noteText),
+                        ],
+                      ),
+                    ],
+                  ),
                   trailing:Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
